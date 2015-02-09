@@ -5,7 +5,8 @@ namespace SIUToba\ClienteOauth;
 
 use League\OAuth2\Client\Token\AccessToken;
 
-class ProveedorSIU extends \League\OAuth2\Client\Provider\AbstractProvider {
+class ProveedorSIU extends \League\OAuth2\Client\Provider\AbstractProvider
+{
 
 
     public $urlAuthorize;

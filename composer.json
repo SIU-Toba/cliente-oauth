@@ -13,9 +13,6 @@
         "league/oauth2-client": "0.7.2"
     },
     "autoload": {
-        "classmap": [
-            "src/controllers"
-        ],
         "psr-0": {
             "SIUToba\\ClienteOauth": "src/"
         }

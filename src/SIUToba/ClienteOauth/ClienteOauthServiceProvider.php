@@ -5,6 +5,7 @@ namespace SIUToba\ClienteOauth;
 use Auth;
 use Config;
 use Illuminate\Support\ServiceProvider;
+use League\Flysystem\Exception;
 
 class ClienteOauthServiceProvider extends ServiceProvider
 {
@@ -24,10 +25,13 @@ class ClienteOauthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('siutoba/clienteOauth');
+        $this->publishes([
+            __DIR__ . '/../../config/siu_oauth_settings.php' => config_path('siu_oauth_settings.php'),
+        ]);
 
     }
-        /**
+
+    /**
      * Register the service provider.
      *
      * @return void
@@ -36,10 +40,14 @@ class ClienteOauthServiceProvider extends ServiceProvider
     {
         $this->app['clienteOauth'] = $this->app->share(function ($app) {
 
-            $config = Config::get('clienteOauth::oauth_settings.oauth2');
+            $config = config('siu_oauth_settings.oauth2');
+            if (!$config) {
+                throw new Exception("No se encontró la configuracion de Oauth");
+            }
+
             $proveedor = new ProveedorSIU($config);
 
-            $grant = $app->make($config['grant_type'].'-Grant');
+            $grant = $app->make($config['grant_type'] . '-Grant');
 
             $cliente = new ClienteOauth($proveedor, $grant);
 
@@ -52,7 +60,7 @@ class ClienteOauthServiceProvider extends ServiceProvider
             $user = Auth::user();
 
             if (!isset($user->assertion)) {
-                throw new \Exception ("Error, el usuario no tiene una aserción de saml");
+                throw new \Exception ("Error, el usuario no tiene una aserción de saml. Agregarle una el usuario de Laravel");
             } else {
                 $assertion = $user->assertion;
             }
